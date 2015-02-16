@@ -22,6 +22,13 @@
             <version>5.1.29</version>
         </dependency>
 
+        <dependency>
+            <groupId>net.imagej</groupId>
+            <artifactId>ij</artifactId>
+            <version>1.49b</version>
+        </dependency>
+
+
     </dependencies>
 
 

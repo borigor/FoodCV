@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
+import java.util.Stack;
 
 import static org.bytedeco.javacpp.opencv_highgui.cvLoadImage;
 import static org.bytedeco.javacpp.opencv_core.IplImage;
@@ -35,14 +36,14 @@ public class FoodDetectorGUI extends JFrame {
 
         foodDetector = new FoodDetector();
 
-        foodDetector.createTemplate("Borsch", "data/p5", new Rectangle(600, 150, 500, 500));
-        foodDetector.createTemplate("Puree soup", "data/p1", new Rectangle(1100, 200, 500, 500));
-        foodDetector.createTemplate("Rice", "data/p2", new Rectangle(1020, 920, 400, 250));
-        foodDetector.createTemplate("Buckwheat", "data/p15", new Rectangle(400, 800, 300, 300));
-        foodDetector.createTemplate("Mashed potatoes", "data/p7", new Rectangle(1210, 950, 400, 250));
-        foodDetector.createTemplate("Cutlet", "data/p1", new Rectangle(750, 850, 350, 180));
-        foodDetector.createTemplate("Pork", "data/p14", new Rectangle(450, 600, 430, 300));
-        foodDetector.createTemplate("Kompot", "data/p1", new Rectangle(630, 150, 250, 250));
+        foodDetector.createTemplate("Borsch", "data/p5", new Rectangle(600, 150, 500, 500), 0.55);
+        foodDetector.createTemplate("Puree soup", "data/p1", new Rectangle(1100, 200, 500, 500), 0.8);
+        foodDetector.createTemplate("Rice", "data/p2", new Rectangle(1020, 920, 400, 250), 0.8);
+        foodDetector.createTemplate("Buckwheat", "data/p15", new Rectangle(400, 800, 300, 300), 0.8);
+        foodDetector.createTemplate("Mashed potatoes", "data/p7", new Rectangle(1210, 950, 400, 250), 0.8);
+        foodDetector.createTemplate("Cutlet", "data/p1", new Rectangle(750, 850, 350, 180), 0.8);
+        foodDetector.createTemplate("Pork", "data/p14", new Rectangle(450, 600, 430, 300), 0.8);
+        foodDetector.createTemplate("Kompot", "data/p1", new Rectangle(630, 150, 250, 250), 0.8);
 
         imagePanel = new ImagePanel();
 
@@ -53,7 +54,7 @@ public class FoodDetectorGUI extends JFrame {
 
         System.out.print(colorAlgButton.getSize());
 
-        JPanel menu = new JPanel(new GridLayout(4, 1));
+        final JPanel menu = new JPanel(new GridLayout(15, 1));
         menu.add(openFileButton);
         menu.add(camShiftButton);
         menu.add(meanShiftButton);
@@ -100,6 +101,65 @@ public class FoodDetectorGUI extends JFrame {
 
                 Utils.show(tempBufImage, "buf res");
                 imagePanel.setImg(tempBufImage);
+            }
+        });
+
+        meanShiftButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                for (String nameTemplate : foodDetector.getFoodTemplateMap().keySet()) {
+                    foodDetector.meanShiftDetection(imageFlieName, foodDetector.getFoodTemplateMap().get(nameTemplate), nameTemplate);
+                }
+
+                IplImage tempImage = cvLoadImage(imageFlieName);
+                BufferedImage tempBufImage = tempImage.getBufferedImage();
+
+                for (String s : foodDetector.resultMap.keySet()) {
+                    tempBufImage = Utils.drawAndWriteOnImageResults(tempBufImage, Utils.toRectangle(foodDetector.resultMap.get(s)), s, Color.RED);
+
+                    Utils.show(Utils.drawAndWriteOnImage(tempImage, Utils.toRectangle(foodDetector.resultMap.get(s)), s, Color.RED),
+                            "Output in " + " inerations");
+
+//                    resultMap.append(s + "\n");
+                    menu.add(new JLabel(s));
+                }
+                foodDetector.resultMap = new HashMap<String, opencv_core.CvRect>();
+
+                Utils.show(tempBufImage, "buf res");
+                imagePanel.setImg(tempBufImage);
+                menu.updateUI();
+//                resultsSearchList.setText(namesResult.toString());
+//                resultsSearchList.append(namesResult.toString());
+            }
+        });
+
+        colorAlgButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                for (String nameTemplate : foodDetector.getFoodTemplateMap().keySet()) {
+                    foodDetector.colorDetector(imageFlieName, foodDetector.getFoodTemplateMap().get(nameTemplate), nameTemplate);
+                }
+
+                IplImage tempImage = cvLoadImage(imageFlieName);
+                BufferedImage tempBufImage = tempImage.getBufferedImage();
+
+                for (String s : foodDetector.resultMap.keySet()) {
+                    tempBufImage = Utils.drawAndWriteOnImageResults(tempBufImage, Utils.toRectangle(foodDetector.resultMap.get(s)), s, Color.RED);
+
+                    Utils.show(Utils.drawAndWriteOnImage(tempImage, Utils.toRectangle(foodDetector.resultMap.get(s)), s, Color.RED),
+                            "Output in " + " inerations");
+
+//                    resultMap.append(s + "\n");
+                    menu.add(new JLabel(s));
+                }
+                foodDetector.resultMap = new HashMap<String, opencv_core.CvRect>();
+
+                Utils.show(tempBufImage, "buf res");
+                imagePanel.setImg(tempBufImage);
+                menu.updateUI();
+
             }
         });
 

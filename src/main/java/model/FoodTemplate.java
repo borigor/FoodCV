@@ -16,6 +16,10 @@ public class FoodTemplate {
     private int minSaturation;
     private CvHistogram templateHueHist;
 
+    private int minDist;
+    private ColorRGB targetColor;
+    private double coef;
+
     public String getName() {
         return name;
     }
@@ -54,5 +58,29 @@ public class FoodTemplate {
 
     public void setTemplateHueHist(CvHistogram templateHueHist) {
         this.templateHueHist = templateHueHist;
+    }
+
+    public int getMinDist() {
+        return minDist;
+    }
+
+    public void setMinDist(int minDist) {
+        this.minDist = minDist;
+    }
+
+    public ColorRGB getTargetColor() {
+        return targetColor;
+    }
+
+    public void setTargetColor(ColorRGB targetColor) {
+        this.targetColor = targetColor;
+    }
+
+    public double getCoef() {
+        return coef;
+    }
+
+    public void setCoef(double coef) {
+        this.coef = coef;
     }
 }

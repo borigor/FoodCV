@@ -1,3 +1,4 @@
+import ij.process.ByteProcessor;
 import org.bytedeco.javacv.CanvasFrame;
 
 import javax.swing.*;
@@ -181,5 +182,19 @@ public class Utils {
         g.dispose();
 
         return canvas;
+    }
+
+    public static int calculateColorArea(ByteProcessor img, int xStart, int yStart, Rectangle rect) {
+
+        int count = 0;
+
+        for (int y = yStart; y < yStart + rect.height; y++) {
+            for (int x = xStart; x < xStart + rect.width; x++) {
+                if (img.get(x, y) == 255) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 }
